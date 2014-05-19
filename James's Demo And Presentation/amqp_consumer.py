@@ -44,9 +44,9 @@ class Con(object):
 
     def demo3(self, this_list):
         this_list = json.loads(this_list)
-        for item in this_list:
-            print item
+        for key in this_list:
+            print key, this_list[key]
         
 if __name__ == '__main__':
-    app = Con()
+    app = Con(jsonify = True, dict_input = True)
     app.receive_messages()

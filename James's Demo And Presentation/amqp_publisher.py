@@ -34,7 +34,7 @@ class Pub(object):
         self.conn.close()
 
 if __name__ == '__main__':
-    app = Pub()
+    app = Pub(jsonify = True, dict_input = True)
     app.send_message()
 
 
