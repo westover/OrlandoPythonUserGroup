@@ -1,5 +1,4 @@
 import numpy as np
-import cProfile
 from distance import *
 
 # SETUP
