@@ -1,4 +1,3 @@
-#!/usr/bin/env python
 import numpy as np
 import matplotlib.pyplot as plt
 import scipy.signal
@@ -12,12 +11,13 @@ order = 4       # IIR
 x = np.concatenate([np.ones(100), np.ones(100) * 10.0])  # nonzero step function
 
 plt.figure()
+plt.title('Input Signal')
 plt.plot(x, marker='o')
 plt.xlabel('sample')
 plt.ylabel('x')
 plt.ylim(-1, 11)
 
-# FIR LPF
+# Finite impulse response (FIR) low-pass filter (LPF)
 lpf = scipy.signal.firwin(numtaps, cutoff, window=('hamming'))
 
 # Compute and plot frequency response
@@ -50,7 +50,7 @@ y, zf = scipy.signal.lfilter(lpf, [1.0], x, zi=zi)
 plt.plot(y, label="Filtered with IC", linewidth=4)
 plt.legend(loc='upper left')
 
-# IIR LPF
+# Infinite Impulse Response (IIR) LPF
 butterworth = scipy.signal.butter(order, cutoff, btype='lowpass')
 butterworth_freq, butterworth_response = scipy.signal.freqz(butterworth[0], butterworth[1])
 

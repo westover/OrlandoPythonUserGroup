@@ -1,19 +1,19 @@
-#!/usr/bin/env python
-from numpy import *
+import numpy as np
 from matplotlib import pyplot as plt
 from scipy import signal
 
 # Setup
-tau = 5.0 * 60    # 5 minutes
+tau = 5.0 * 60    # time constant (seconds)
 t_max = 60 * 30.0  # 30 minute experiment
-dt = 10.0
+dt = 10.0         # time step
 
 ### Using the lti class from scipy.signal ###
-# Define a first-order LTI system
+
+# Define a first-order linear time invariant (LTI) system
 sys = signal.lti(1, [1, 1.0 / tau])
 
 # Plot its step response with step method
-h_times = arange(0, t_max, dt)
+h_times = np.arange(0, t_max, dt)
 
 step_response = sys.step(T=h_times)[1]
 plt.plot(h_times, step_response / step_response.max())    # normalize
@@ -37,11 +37,11 @@ def h(t, tau):
         h   array of time values
         tau time constant
     """
-    h = exp(-t / tau)
+    h = np.exp(-t / tau)
     h[t < 0] = 0.0
     return h
 
-plt.plot(h_times, h(h_times,tau), color='green', marker='.', ls='', 
+plt.plot(h_times, h(h_times,tau), color='green', marker='.', ls='',
         label='Using h(t)')
 plt.xlabel('t')
 plt.ylabel('h(t)')
@@ -49,15 +49,15 @@ plt.title('Impulse response')
 plt.legend(loc='best')
 
 # Define a sampled step function
-x_times = arange(-t_max, t_max, dt)
-step = zeros(len(x_times))
+x_times = np.arange(-t_max, t_max, dt)
+step = np.zeros(len(x_times))
 step[len(step)/2:] = 1.0
 
 plt.figure()
 plt.plot(x_times, step, color='black', label='step fn')
 
 # Convolve step function with impulse response
-step_response = convolve(h(h_times, tau), step, mode='valid')
+step_response = np.convolve(h(h_times, tau), step, mode='valid')
 plt.plot(h_times, step_response[:-1]/step_response.max(), color='green',
         marker='.', label='step response')
 plt.xlabel('t')
@@ -68,15 +68,16 @@ plt.title('Step response')
 h_array = h(h_times, tau)
 
 # Pad step_response(t) to be longer than h(t)
-step_response = concatenate([zeros(len(h_times)), step_response,
-    ones(len(h_times))])
+step_response = np.concatenate([np.zeros(len(h_times)), step_response,
+    np.ones(len(h_times))])
 
 x_reconstructed = signal.deconvolve(step_response, h_array)
 
 x_len = len(step_response) - len(h_times) + 1
-x_reconstructed_times = arange(-dt*x_len/2, dt*(x_len/2-1), dt)
+x_reconstructed_times = np.arange(-dt*x_len/2, dt*(x_len/2-1), dt)
 
 plt.plot(x_reconstructed_times, x_reconstructed[0][:-1], color='blue', ls='',
         marker='s', label='recovered step fn')
 plt.legend(loc='best')
+
 plt.show()
