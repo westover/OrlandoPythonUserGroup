@@ -8,6 +8,7 @@ domain_size = 50.0
 num_spheres = 1000
 
 # Benchmark non-vectorized versions
+print("Benchmarking with 1000 particles.")
 rng = np.random.RandomState(seed=1)
 
 x = rng.uniform(0, domain_size, num_spheres)
@@ -19,6 +20,7 @@ find_distances_2(x, y, z, radius)
 find_distances_3(x, y, z, radius)
 
 # Benchmark vectorized codes
+print("Benchmarking with 3000 particles.")
 
 num_spheres = 3000
 
