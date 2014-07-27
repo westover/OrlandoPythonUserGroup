@@ -2,6 +2,20 @@ import numpy as np
 from matplotlib import pyplot as plt
 from scipy import signal
 
+### Define our own 1st order LTI system to compare with SciPy class
+def h(t, tau):
+    """Impulse response of first-order LTI system.
+    Args:
+        t   array of time values
+        tau time constant
+
+    Returns:
+        NumPy array with impulse response of LTI system.
+    """
+    h = np.exp(-t / tau)
+    h[t < 0] = 0.0
+    return h
+
 # Setup
 tau = 5.0 * 60    # time constant (seconds)
 t_max = 60 * 30.0  # 30 minute experiment
@@ -21,48 +35,38 @@ plt.axhline(0.63, color='red')  # mark time constant
 plt.axvline(tau, color='red')
 plt.xlabel('t')
 plt.ylabel('h(t)')
-plt.title('Step response')
+plt.title('Step Response')
 
 # Plot its impulse response with impulse method
 plt.figure()
-plt.plot(h_times, sys.impulse(T=h_times)[1], label='Using step method')
+plt.plot(h_times, sys.impulse(T=h_times)[1], label='signal.lti')
 plt.xlabel('t')
 plt.ylabel('h(t)')
-plt.title('Impulse response')
+plt.title('Impulse Response')
 
-### Defining our own 1st order LTI system ###
-def h(t, tau):
-    """Impulse response of first-order LTI system.
-    Args:
-        h   array of time values
-        tau time constant
-    """
-    h = np.exp(-t / tau)
-    h[t < 0] = 0.0
-    return h
-
+# Compare SciPy class to our impulse response function
 plt.plot(h_times, h(h_times,tau), color='green', marker='.', ls='',
-        label='Using h(t)')
+        label='function h(t, tau)')
 plt.xlabel('t')
 plt.ylabel('h(t)')
-plt.title('Impulse response')
+plt.title('Impulse Response')
 plt.legend(loc='best')
 
-# Define a sampled step function
+# Define a discrete-time step function
 x_times = np.arange(-t_max, t_max, dt)
 step = np.zeros(len(x_times))
 step[len(step)/2:] = 1.0
 
 plt.figure()
-plt.plot(x_times, step, color='black', label='step fn')
+plt.plot(x_times, step, color='black', label='Input step fn')
 
 # Convolve step function with impulse response
 step_response = np.convolve(h(h_times, tau), step, mode='valid')
 plt.plot(h_times, step_response[:-1]/step_response.max(), color='green',
-        marker='.', label='step response')
+        marker='.', label='system response')
 plt.xlabel('t')
 plt.ylabel('h(t)')
-plt.title('Step response')
+plt.title('Response to Step Function')
 
 # Deconvolve to recover original signal
 h_array = h(h_times, tau)
